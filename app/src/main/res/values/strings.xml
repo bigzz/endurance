@@ -5,5 +5,9 @@
     <string name="total_write_size_mb">Total Write Size(MB):</string>
     <string name="free_size">Free Size:</string>
     <string name="capacity">Capacity:</string>
-    <string name="emmc_id">eMMC ID:</string>
+    <string name="cid">eMMC CID:</string>
+    <string name="manfid">eMMC MANFID:</string>
+    <string name="name">Name:</string>
+    <string name="stop">Stop</string>
+    <string name="start">Start</string>
 </resources>

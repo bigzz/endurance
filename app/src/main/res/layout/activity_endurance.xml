@@ -12,24 +12,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
+        android:text="@string/start"
         android:id="@+id/button_start"
-        android:layout_marginBottom="41dp"
+        android:layout_marginBottom="39dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/liftTimeA"
-        android:layout_alignStart="@+id/liftTimeA"
-        android:layout_marginLeft="26dp"
-        android:layout_marginStart="26dp" />
+        android:layout_toRightOf="@+id/vendor_name"
+        android:layout_toEndOf="@+id/vendor_name" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/emmc_id"
-        android:id="@+id/textID"
-        android:layout_marginLeft="31dp"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="35dp"
+        android:text="@string/manfid"
+        android:id="@+id/manfid"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -37,64 +32,160 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Stop"
+        android:text="@string/stop"
         android:id="@+id/button_stop"
         android:layout_alignTop="@+id/button_start"
-        android:layout_toRightOf="@+id/text_total_size"
-        android:layout_toEndOf="@+id/text_total_size" />
+        android:layout_alignLeft="@+id/text_life_time_b"
+        android:layout_alignStart="@+id/text_life_time_b" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/capacity"
-        android:id="@+id/textCap"
-        android:layout_marginTop="29dp"
-        android:layout_below="@+id/textID"
-        android:layout_alignLeft="@+id/textID"
-        android:layout_alignStart="@+id/textID" />
+        android:text="@string/name"
+        android:id="@+id/vendor_name"
+        android:layout_marginTop="17dp"
+        android:layout_below="@+id/cid"
+        android:layout_alignLeft="@+id/cid"
+        android:layout_alignStart="@+id/cid" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/free_size"
-        android:id="@+id/textFree"
-        android:layout_marginTop="26dp"
-        android:layout_below="@+id/textCap"
-        android:layout_alignLeft="@+id/textCap"
-        android:layout_alignStart="@+id/textCap" />
+        android:id="@+id/free"
+        android:layout_above="@+id/total_size"
+        android:layout_alignLeft="@+id/vendor_name"
+        android:layout_alignStart="@+id/vendor_name"
+        android:layout_marginBottom="22dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/total_write_size_mb"
-        android:id="@+id/text_total_size"
+        android:id="@+id/total_size"
         android:layout_centerVertical="true"
-        android:layout_alignLeft="@+id/textFree"
-        android:layout_alignStart="@+id/textFree" />
+        android:layout_alignLeft="@+id/free"
+        android:layout_alignStart="@+id/free" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/emmc_life_time_a"
-        android:id="@+id/liftTimeA"
+        android:id="@+id/lifttimea"
         android:layout_marginTop="26dp"
-        android:layout_below="@+id/text_total_size"
-        android:layout_alignLeft="@+id/text_total_size"
-        android:layout_alignStart="@+id/text_total_size" />
+        android:layout_below="@+id/total_size"
+        android:layout_alignLeft="@+id/total_size"
+        android:layout_alignStart="@+id/total_size" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/emmc_life_time_b"
-        android:id="@+id/lifeTimeB"
-        android:layout_below="@+id/liftTimeA"
-        android:layout_alignLeft="@+id/liftTimeA"
-        android:layout_alignStart="@+id/liftTimeA"
+        android:id="@+id/lifetimeb"
+        android:layout_below="@+id/lifttimea"
+        android:layout_alignLeft="@+id/lifttimea"
+        android:layout_alignStart="@+id/lifttimea"
         android:layout_marginTop="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/cid"
+        android:id="@+id/cid"
+        android:layout_marginTop="21dp"
+        android:layout_below="@+id/manfid"
+        android:layout_alignLeft="@+id/manfid"
+        android:layout_alignStart="@+id/manfid" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/capacity"
+        android:id="@+id/emmc_size"
+        android:layout_marginTop="18dp"
+        android:layout_below="@+id/vendor_name"
+        android:layout_alignLeft="@+id/vendor_name"
+        android:layout_alignStart="@+id/vendor_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_cid"
+        android:layout_above="@+id/vendor_name"
+        android:layout_alignLeft="@+id/text_manfid"
+        android:layout_alignStart="@+id/text_manfid" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_name"
+        android:layout_alignBottom="@+id/vendor_name"
+        android:layout_alignLeft="@+id/text_cid"
+        android:layout_alignStart="@+id/text_cid" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_size"
+        android:layout_alignTop="@+id/emmc_size"
+        android:layout_alignLeft="@+id/text_name"
+        android:layout_alignStart="@+id/text_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_free"
+        android:layout_alignBottom="@+id/free"
+        android:layout_alignLeft="@+id/text_size"
+        android:layout_alignStart="@+id/text_size" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_tatal_write"
+        android:layout_alignBottom="@+id/total_size"
+        android:layout_toRightOf="@+id/total_size"
+        android:layout_toEndOf="@+id/total_size"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_life_time_a"
+        android:layout_alignTop="@+id/lifttimea"
+        android:layout_alignLeft="@+id/text_tatal_write"
+        android:layout_alignStart="@+id/text_tatal_write" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_life_time_b"
+        android:layout_alignTop="@+id/lifetimeb"
+        android:layout_alignLeft="@+id/text_life_time_a"
+        android:layout_alignStart="@+id/text_life_time_a" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/text_manfid"
+        android:layout_alignTop="@+id/manfid"
+        android:layout_toRightOf="@+id/lifttimea"
+        android:layout_toEndOf="@+id/lifttimea" />
 
 </RelativeLayout>
