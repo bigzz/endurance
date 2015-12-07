@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Endurance</string>
+    <string name="emmc_life_time_b">eMMC LIFE_TIME_B:</string>
+    <string name="emmc_life_time_a">eMMC LIFE_TIME_A:</string>
+    <string name="total_write_size_mb">Total Write Size(MB):</string>
+    <string name="free_size">Free Size:</string>
+    <string name="capacity">Capacity:</string>
+    <string name="emmc_id">eMMC ID:</string>
 </resources>
