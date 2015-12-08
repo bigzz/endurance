@@ -1,5 +1,7 @@
 package com.meizu.endurance;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
@@ -33,6 +35,7 @@ public class Endurance extends AppCompatActivity {
     private static final int MSG_FREE_SIZE = 0;
     private static final int MSG_LIFE_TIME_A = 1;
     private static final int MSG_LIFE_TIME_B = 2;
+    private static final int MSG_TOTAL_WRITE =3;
 
     private static final String manfid_path = "/sys/block/mmcblk0/device/manfid";
     private static final String cid_path = "/sys/block/mmcblk0/device/cid";
@@ -43,6 +46,9 @@ public class Endurance extends AppCompatActivity {
 
     private boolean isRunning = true;
     private boolean isWriting = true;
+
+    private long total_size = 0;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -176,11 +182,22 @@ public class Endurance extends AppCompatActivity {
         return buffer;
     }
 
-    public void writeFile(String fileName, byte[] bytes) throws IOException {
+    public void writeFile(String filename, byte[] bytes) throws IOException {
         try {
-            FileOutputStream fout = openFileOutput(fileName, MODE_PRIVATE|MODE_APPEND);
+            FileOutputStream fout = openFileOutput(filename, MODE_PRIVATE|MODE_APPEND);
             fout.write(bytes);
             fout.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeFile(String filename, String string) throws IOException {
+        FileOutputStream outputStream;
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(string.getBytes());
+            outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -239,7 +256,12 @@ public class Endurance extends AppCompatActivity {
                     int life_b = (int) msg.obj;
                     life_time_b.setText(life_tima_b_h + " " + String.valueOf(life_b));
                     break;
-
+                case MSG_TOTAL_WRITE:
+                    TextView total_write = (TextView) findViewById(R.id.total_write);
+                    String total_write_h = getString(R.string.total_write_size_mb);
+                    long total_write_mb = (long) msg.obj;
+                    total_write.setText(total_write_h + " " + String.valueOf(total_write_mb));
+                    break;
             }
         }
     };
@@ -306,6 +328,10 @@ public class Endurance extends AppCompatActivity {
             long resoved_size = 1024 * 1024 * 1024;
             byte[] bytes_buff = new byte[buff_size];
 
+            SharedPreferences mySharedPreferences=getSharedPreferences("info", 0);
+            SharedPreferences.Editor editor=mySharedPreferences.edit();
+            total_size = mySharedPreferences.getLong("total", 0);
+
             while (isRunning) {
                 free_size = get_userdata_free();
                 count = (free_size - resoved_size)/buff_size;
@@ -313,11 +339,15 @@ public class Endurance extends AppCompatActivity {
                 for(int i = 0; i < count && isWriting ; i++) {
                     try {
                         writeFile("dummy.bin", bytes_buff);
-                        Log.i(TAG, "write dummy.bin success!" + i + " " + count);
+                        total_size += (long) buff_size;
+                        Log.i(TAG, "write dummy.bin success!" + i + " " + count + total_size);
                     } catch (Exception e) {
                         Log.e(TAG, e.toString());
                     }
                 }
+                editor.putLong("total", total_size);
+                editor.commit();
+
                 SystemClock.sleep(100);
                 deleteFile("dummy.bin");
                 SystemClock.sleep(1000);
@@ -338,6 +368,7 @@ public class Endurance extends AppCompatActivity {
                 life_time_b = ext_csd[269];
 
                 mHandler.obtainMessage(MSG_FREE_SIZE,data_free_mb).sendToTarget();
+                mHandler.obtainMessage(MSG_TOTAL_WRITE,total_size/(1024 *1024)).sendToTarget();
                 mHandler.obtainMessage(MSG_LIFE_TIME_A,life_time_a).sendToTarget();
                 mHandler.obtainMessage(MSG_LIFE_TIME_B,life_time_b).sendToTarget();
                 SystemClock.sleep(1000);
