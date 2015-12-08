@@ -39,6 +39,9 @@ public class Endurance extends AppCompatActivity {
     private static final String size_path = "/sys/block/mmcblk0/size";
 
     private static final String TAG = "Endurance";
+
+    private boolean isRunning = true;
+    private boolean isWriting = true;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -259,6 +262,8 @@ public class Endurance extends AppCompatActivity {
     private final class ButtonStartOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            isRunning = true;
+            isWriting = true;
             new Thread(write_thread).start();
             new Thread(update_timer).start();
         }
@@ -267,7 +272,8 @@ public class Endurance extends AppCompatActivity {
     private final class ButtonStopOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-
+            isRunning = false;
+            isWriting = false;
         }
     }
 
@@ -279,11 +285,11 @@ public class Endurance extends AppCompatActivity {
             long resoved_size = 1024 * 1024 * 1024;
             byte[] bytes_buff = new byte[buff_size];
 
-            while (true) {
+            while (isRunning) {
                 free_size = get_userdata_free();
                 count = (free_size - resoved_size)/buff_size;
                 prepare_buffers(bytes_buff);
-                for(int i = 0; i < count ; i++) {
+                for(int i = 0; i < count && isWriting ; i++) {
                     try {
                         writeFile("dummy.bin", bytes_buff);
                         Log.i(TAG, "write dummy.bin success!" + i + " " + count);
@@ -304,7 +310,7 @@ public class Endurance extends AppCompatActivity {
             long free_size,data_free_mb;
             byte[] ext_csd = new byte[512];
             int life_time_a,life_time_b;
-            while (true) {
+            while (isRunning) {
                 free_size = get_userdata_free();
                 data_free_mb = free_size / 1024 / 1024;
                 life_time_a = ext_csd[268];
