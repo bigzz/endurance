@@ -1,5 +1,6 @@
 package com.meizu.endurance;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -111,6 +112,10 @@ public class Endurance extends AppCompatActivity {
 
         button_start.setOnClickListener(new ButtonStartOnClickListener());
         button_stop.setOnClickListener(new ButtonStopOnClickListener());
+
+        button_start.setClickable(true);
+        button_stop.setClickable(false);
+        button_stop.setEnabled(false);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -262,6 +267,14 @@ public class Endurance extends AppCompatActivity {
     private final class ButtonStartOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            Button button_start = (Button) findViewById(R.id.button_start);
+            Button button_stop = (Button) findViewById(R.id.button_stop);
+
+            button_start.setClickable(false);
+            button_start.setEnabled(false);
+            button_stop.setClickable(true);
+            button_stop.setEnabled(true);
+
             isRunning = true;
             isWriting = true;
             new Thread(write_thread).start();
@@ -272,6 +285,14 @@ public class Endurance extends AppCompatActivity {
     private final class ButtonStopOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            Button button_start = (Button) findViewById(R.id.button_start);
+            Button button_stop = (Button) findViewById(R.id.button_stop);
+
+            button_start.setClickable(true);
+            button_start.setEnabled(true);
+            button_stop.setClickable(false);
+            button_stop.setEnabled(false);
+
             isRunning = false;
             isWriting = false;
         }
