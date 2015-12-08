@@ -164,6 +164,7 @@ public class Endurance extends AppCompatActivity {
             }
         }
     }
+
     public long get_userdata_free() {
         File data = Environment.getDataDirectory();
         StatFs data_stat = new StatFs(data.getPath());
@@ -196,12 +197,14 @@ public class Endurance extends AppCompatActivity {
         AppIndex.AppIndexApi.start(client, viewAction);
     }
 
-    private Handler mHandler = new Handler() {
+    private  Handler mHandler = new Handler() {
         public void handleMessage (Message msg) {
             switch(msg.what) {
                 case MSG_SUCCESS:
                     TextView free = (TextView)findViewById(R.id.free);
-                    free.setText((String) msg.obj);
+                    String free_h = getString(R.string.free_size);
+                    long free_size_mb = (long) msg.obj;
+                    free.setText(free_h + " " + String.valueOf(free_size_mb) + " MB");
                     break;
                 case MSG_FAILURE:
                     break;
@@ -248,15 +251,15 @@ public class Endurance extends AppCompatActivity {
         @Override
         public void run() {
             long free_size = get_userdata_free();
-            byte[] bytes_buff = new byte[16 * 1024 * 1024];
-            long count = (free_size - 100 * 1024 * 1024)/ (16 * 1024 * 1024);
+            int buff_size = 64 * 1024 * 1024;
+            byte[] bytes_buff = new byte[buff_size];
+            long count = (free_size - 100 * 1024 * 1024)/ buff_size;
+            prepare_buffers(bytes_buff);
 
             while (true) {
                 for(int i = 0; i < count ; i++) {
-                    prepare_buffers(bytes_buff);
                     try {
                         writeFile("dummy.bin", bytes_buff);
-
                         Log.i(TAG, "write dummy.bin success!");
                     } catch (Exception e) {
                         Log.e(TAG, e.toString());
@@ -271,17 +274,13 @@ public class Endurance extends AppCompatActivity {
     Runnable update_timer = new Runnable() {
         @Override
         public void run() {
-            String free_h = getString(R.string.free_size);
-            String free_text;
+
             long free_size,data_free_mb;
 
             while (true) {
                 free_size = get_userdata_free();
                 data_free_mb = free_size / 1024 / 1024;
-
-                free_text = free_h + " " + String.valueOf(data_free_mb) + " MB";
-                mHandler.obtainMessage(MSG_SUCCESS,free_text).sendToTarget();
-
+                mHandler.obtainMessage(MSG_SUCCESS,data_free_mb).sendToTarget();
                 SystemClock.sleep(1000);
             }
         }
