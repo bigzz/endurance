@@ -29,8 +29,9 @@ import java.util.regex.Pattern;
 
 public class Endurance extends AppCompatActivity {
 
-    private static final int MSG_SUCCESS = 0;
-    private static final int MSG_FAILURE = 1;
+    private static final int MSG_FREE_SIZE = 0;
+    private static final int MSG_LIFE_TIME_A = 1;
+    private static final int MSG_LIFE_TIME_B = 2;
 
     private static final String manfid_path = "/sys/block/mmcblk0/device/manfid";
     private static final String cid_path = "/sys/block/mmcblk0/device/cid";
@@ -146,6 +147,27 @@ public class Endurance extends AppCompatActivity {
         return replaceBlank(result);
     }
 
+    public byte[] read_EXT_CSD() throws Exception {
+        //  /sys/kernel/debug/mmc0/mmc0:0001/ext_csd
+        File file = new File("/sys/kernel/debug/mmc0/mmc0:0001/ext_csd");
+        FileInputStream fis = new FileInputStream(file);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[512];
+        int len = -1;
+        try {
+            while ((len = (fis.read(buffer))) != -1) {
+                baos.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        baos.close();
+        fis.close();
+
+        return buffer;
+    }
+
     public void writeFile(String fileName, byte[] bytes) throws IOException {
         try {
             FileOutputStream fout = openFileOutput(fileName, MODE_PRIVATE|MODE_APPEND);
@@ -156,20 +178,11 @@ public class Endurance extends AppCompatActivity {
         }
     }
 
-    public void delete_file(String filename) {
-        File file = new File(filename);
-        if (file.exists()) {
-            if (file.isFile()) {
-                file.delete();
-            }
-        }
-    }
-
     public long get_userdata_free() {
         File data = Environment.getDataDirectory();
         StatFs data_stat = new StatFs(data.getPath());
 
-        return data_stat.getAvailableBytes();
+        return data_stat.getFreeBytes();
     }
 
     public void prepare_buffers(byte[] buff) {
@@ -200,14 +213,25 @@ public class Endurance extends AppCompatActivity {
     private  Handler mHandler = new Handler() {
         public void handleMessage (Message msg) {
             switch(msg.what) {
-                case MSG_SUCCESS:
+                case MSG_FREE_SIZE:
                     TextView free = (TextView)findViewById(R.id.free);
                     String free_h = getString(R.string.free_size);
                     long free_size_mb = (long) msg.obj;
                     free.setText(free_h + " " + String.valueOf(free_size_mb) + " MB");
                     break;
-                case MSG_FAILURE:
+                case MSG_LIFE_TIME_A:
+                    TextView life_time_a = (TextView) findViewById(R.id.life_time_a);
+                    String life_tima_a_h = getString(R.string.emmc_life_time_a);
+                    int life_a = (int) msg.obj;
+                    life_time_a.setText(life_tima_a_h + " " + String.valueOf(life_a));
                     break;
+                case MSG_LIFE_TIME_B:
+                    TextView life_time_b = (TextView) findViewById(R.id.life_time_b);
+                    String life_tima_b_h = getString(R.string.emmc_life_time_b);
+                    int life_b = (int) msg.obj;
+                    life_time_b.setText(life_tima_b_h + " " + String.valueOf(life_b));
+                    break;
+
             }
         }
     };
@@ -250,23 +274,26 @@ public class Endurance extends AppCompatActivity {
     Runnable write_thread = new Runnable() {
         @Override
         public void run() {
-            long free_size = get_userdata_free();
+            long free_size,count;
             int buff_size = 64 * 1024 * 1024;
+            long resoved_size = 1024 * 1024 * 1024;
             byte[] bytes_buff = new byte[buff_size];
-            long count = (free_size - 100 * 1024 * 1024)/ buff_size;
-            prepare_buffers(bytes_buff);
 
             while (true) {
+                free_size = get_userdata_free();
+                count = (free_size - resoved_size)/buff_size;
+                prepare_buffers(bytes_buff);
                 for(int i = 0; i < count ; i++) {
                     try {
                         writeFile("dummy.bin", bytes_buff);
-                        Log.i(TAG, "write dummy.bin success!");
+                        Log.i(TAG, "write dummy.bin success!" + i + " " + count);
                     } catch (Exception e) {
                         Log.e(TAG, e.toString());
                     }
                 }
+                SystemClock.sleep(100);
+                deleteFile("dummy.bin");
                 SystemClock.sleep(1000);
-                delete_file("dummy.bin");
             }
         }
     };
@@ -274,13 +301,18 @@ public class Endurance extends AppCompatActivity {
     Runnable update_timer = new Runnable() {
         @Override
         public void run() {
-
             long free_size,data_free_mb;
-
+            byte[] ext_csd = new byte[512];
+            int life_time_a,life_time_b;
             while (true) {
                 free_size = get_userdata_free();
                 data_free_mb = free_size / 1024 / 1024;
-                mHandler.obtainMessage(MSG_SUCCESS,data_free_mb).sendToTarget();
+                life_time_a = ext_csd[268];
+                life_time_b = ext_csd[269];
+
+                mHandler.obtainMessage(MSG_FREE_SIZE,data_free_mb).sendToTarget();
+                mHandler.obtainMessage(MSG_LIFE_TIME_A,life_time_a).sendToTarget();
+                mHandler.obtainMessage(MSG_LIFE_TIME_B,life_time_b).sendToTarget();
                 SystemClock.sleep(1000);
             }
         }
