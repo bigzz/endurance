@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -48,12 +50,6 @@ public class Endurance extends AppCompatActivity {
     private boolean isWriting = true;
 
     private long total_size = 0;
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,9 +119,6 @@ public class Endurance extends AppCompatActivity {
         button_stop.setClickable(false);
         button_stop.setEnabled(false);
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     public static String replaceBlank(String str) {
@@ -207,32 +200,15 @@ public class Endurance extends AppCompatActivity {
         File data = Environment.getDataDirectory();
         StatFs data_stat = new StatFs(data.getPath());
 
-        return data_stat.getFreeBytes();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            return data_stat.getFreeBytes();
+        }else
+            return 0;
     }
 
     public void prepare_buffers(byte[] buff) {
         Random random = new Random();
         random.nextBytes(buff);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Endurance Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.meizu.endurance/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     private  Handler mHandler = new Handler() {
@@ -265,26 +241,6 @@ public class Endurance extends AppCompatActivity {
             }
         }
     };
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Endurance Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.meizu.endurance/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
-    }
 
     private final class ButtonStartOnClickListener implements View.OnClickListener {
         @Override
