@@ -223,14 +223,14 @@ public class Endurance extends AppCompatActivity {
                 case MSG_LIFE_TIME_A:
                     TextView life_time_a = (TextView) findViewById(R.id.life_time_a);
                     String life_tima_a_h = getString(R.string.emmc_life_time_a);
-                    int life_a = (int) msg.obj;
-                    life_time_a.setText(life_tima_a_h + " " + String.valueOf(life_a));
+                    String life_a = (String) msg.obj;
+                    life_time_a.setText(life_tima_a_h + " " + life_a);
                     break;
                 case MSG_LIFE_TIME_B:
                     TextView life_time_b = (TextView) findViewById(R.id.life_time_b);
                     String life_tima_b_h = getString(R.string.emmc_life_time_b);
-                    int life_b = (int) msg.obj;
-                    life_time_b.setText(life_tima_b_h + " " + String.valueOf(life_b));
+                    String life_b = (String) msg.obj;
+                    life_time_b.setText(life_tima_b_h + " " + life_b);
                     break;
                 case MSG_TOTAL_WRITE:
                     TextView total_write = (TextView) findViewById(R.id.total_write);
@@ -316,7 +316,7 @@ public class Endurance extends AppCompatActivity {
         public void run() {
             long free_size,data_free_mb;
             byte[] ext_csd = new byte[1024];
-            int life_time_a,life_time_b;
+            String life_time_a,life_time_b;
             while (isRunning) {
                 free_size = get_userdata_free();
                 try {
@@ -325,8 +325,8 @@ public class Endurance extends AppCompatActivity {
                     Log.e(TAG, e.toString());
                 }
                 data_free_mb = free_size / 1024 / 1024;
-                life_time_a = ext_csd[268];
-                life_time_b = ext_csd[269];
+                life_time_a = "0X" + String.valueOf(ext_csd[536]-48) + String.valueOf(ext_csd[535]-48);  //byte 535 byte 536 [0x 536 535]
+                life_time_b = "0X" + String.valueOf(ext_csd[538]-48) + String.valueOf(ext_csd[537]-48);  //byte 537 byte 538 [0x 538 537]
 
                 mHandler.obtainMessage(MSG_FREE_SIZE,data_free_mb).sendToTarget();
                 mHandler.obtainMessage(MSG_TOTAL_WRITE,total_size/(1024 *1024)).sendToTarget();
