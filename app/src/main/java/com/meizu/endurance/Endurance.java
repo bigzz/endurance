@@ -159,7 +159,7 @@ public class Endurance extends AppCompatActivity {
         File file = new File("/sys/kernel/debug/mmc0/mmc0:0001/ext_csd");
         FileInputStream fis = new FileInputStream(file);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[512];
+        byte[] buffer = new byte[1024];
         int len = -1;
         try {
             while ((len = (fis.read(buffer))) != -1) {
@@ -315,10 +315,15 @@ public class Endurance extends AppCompatActivity {
         @Override
         public void run() {
             long free_size,data_free_mb;
-            byte[] ext_csd = new byte[512];
+            byte[] ext_csd = new byte[1024];
             int life_time_a,life_time_b;
             while (isRunning) {
                 free_size = get_userdata_free();
+                try {
+                    ext_csd = read_EXT_CSD();
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
+                }
                 data_free_mb = free_size / 1024 / 1024;
                 life_time_a = ext_csd[268];
                 life_time_b = ext_csd[269];
