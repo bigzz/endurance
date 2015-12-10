@@ -190,7 +190,7 @@ public class Endurance extends AppCompatActivity {
         StatFs data_stat = new StatFs(data.getPath());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            return data_stat.getFreeBytes();
+            return data_stat.getAvailableBytes();
         }else
             return 0;
     }
