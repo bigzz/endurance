@@ -185,17 +185,6 @@ public class Endurance extends AppCompatActivity {
         }
     }
 
-    public void writeFile(String filename, String string) throws IOException {
-        FileOutputStream outputStream;
-        try {
-            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-            outputStream.write(string.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public long get_userdata_free() {
         File data = Environment.getDataDirectory();
         StatFs data_stat = new StatFs(data.getPath());
